@@ -1,0 +1,391 @@
+{
+ "selected": [
+  {
+   "name": "optdigits",
+   "openml_id": 28,
+   "openml_name": "optdigits",
+   "suite": 99,
+   "task": "multiclass",
+   "n_expected": 5620,
+   "d_expected": 64
+  },
+  {
+   "name": "pendigits",
+   "openml_id": 32,
+   "openml_name": "pendigits",
+   "suite": 99,
+   "task": "multiclass",
+   "n_expected": 10992,
+   "d_expected": 16
+  },
+  {
+   "name": "satimage",
+   "openml_id": 182,
+   "openml_name": "satimage",
+   "suite": 99,
+   "task": "multiclass",
+   "n_expected": 6430,
+   "d_expected": 36
+  },
+  {
+   "name": "theorem-proving",
+   "openml_id": 1475,
+   "openml_name": "first-order-theorem-proving",
+   "suite": 99,
+   "task": "multiclass",
+   "n_expected": 6118,
+   "d_expected": 51
+  },
+  {
+   "name": "wall-robot-navigation",
+   "openml_id": 1497,
+   "openml_name": "wall-robot-navigation",
+   "suite": 99,
+   "task": "multiclass",
+   "n_expected": 5456,
+   "d_expected": 24
+  },
+  {
+   "name": "gesture-phase",
+   "openml_id": 4538,
+   "openml_name": "GesturePhaseSegmentationProcessed",
+   "suite": 99,
+   "task": "multiclass",
+   "n_expected": 9873,
+   "d_expected": 32
+  },
+  {
+   "name": "texture",
+   "openml_id": 40499,
+   "openml_name": "texture",
+   "suite": 99,
+   "task": "multiclass",
+   "n_expected": 5500,
+   "d_expected": 40
+  },
+  {
+   "name": "connect-4",
+   "openml_id": 40668,
+   "openml_name": "connect-4",
+   "suite": 99,
+   "task": "multiclass",
+   "n_expected": 67557,
+   "d_expected": 42
+  },
+  {
+   "name": "jungle-chess",
+   "openml_id": 41027,
+   "openml_name": "jungle_chess_2pcs_raw_endgame_complete",
+   "suite": 99,
+   "task": "multiclass",
+   "n_expected": 44819,
+   "d_expected": 6
+  },
+  {
+   "name": "electricity",
+   "openml_id": 44156,
+   "openml_name": "electricity",
+   "suite": 334,
+   "task": "binary",
+   "n_expected": 38474,
+   "d_expected": 8
+  },
+  {
+   "name": "eye-movements",
+   "openml_id": 44157,
+   "openml_name": "eye_movements",
+   "suite": 334,
+   "task": "binary",
+   "n_expected": 7608,
+   "d_expected": 23
+  },
+  {
+   "name": "covertype-binary",
+   "openml_id": 44159,
+   "openml_name": "covertype",
+   "suite": 334,
+   "task": "binary",
+   "n_expected": 423680,
+   "d_expected": 54
+  },
+  {
+   "name": "albert",
+   "openml_id": 45035,
+   "openml_name": "albert",
+   "suite": 334,
+   "task": "binary",
+   "n_expected": 58252,
+   "d_expected": 31
+  },
+  {
+   "name": "credit-card-default",
+   "openml_id": 45036,
+   "openml_name": "default-of-credit-card-clients",
+   "suite": 334,
+   "task": "binary",
+   "n_expected": 13272,
+   "d_expected": 21
+  },
+  {
+   "name": "road-safety",
+   "openml_id": 45038,
+   "openml_name": "road-safety",
+   "suite": 334,
+   "task": "binary",
+   "n_expected": 111762,
+   "d_expected": 32
+  },
+  {
+   "name": "visualizing-soil",
+   "openml_id": 44056,
+   "openml_name": "visualizing_soil",
+   "suite": 335,
+   "task": "regression",
+   "n_expected": 8641,
+   "d_expected": 4
+  },
+  {
+   "name": "diamonds",
+   "openml_id": 44059,
+   "openml_name": "diamonds",
+   "suite": 335,
+   "task": "regression",
+   "n_expected": 53940,
+   "d_expected": 9
+  },
+  {
+   "name": "brazilian-houses",
+   "openml_id": 44062,
+   "openml_name": "Brazilian_houses",
+   "suite": 335,
+   "task": "regression",
+   "n_expected": 10692,
+   "d_expected": 11
+  },
+  {
+   "name": "bike-sharing-demand",
+   "openml_id": 44063,
+   "openml_name": "Bike_Sharing_Demand",
+   "suite": 335,
+   "task": "regression",
+   "n_expected": 17379,
+   "d_expected": 11
+  },
+  {
+   "name": "house-sales",
+   "openml_id": 44066,
+   "openml_name": "house_sales",
+   "suite": 335,
+   "task": "regression",
+   "n_expected": 21613,
+   "d_expected": 17
+  },
+  {
+   "name": "particulate-matter",
+   "openml_id": 44068,
+   "openml_name": "particulate-matter-ukair-2017",
+   "suite": 335,
+   "task": "regression",
+   "n_expected": 394299,
+   "d_expected": 6
+  },
+  {
+   "name": "sgemm",
+   "openml_id": 44069,
+   "openml_name": "SGEMM_GPU_kernel_performance",
+   "suite": 335,
+   "task": "regression",
+   "n_expected": 241600,
+   "d_expected": 9
+  },
+  {
+   "name": "seattlecrime6",
+   "openml_id": 45043,
+   "openml_name": "seattlecrime6",
+   "suite": 335,
+   "task": "regression",
+   "n_expected": 52031,
+   "d_expected": 4
+  },
+  {
+   "name": "medical-charges",
+   "openml_id": 45048,
+   "openml_name": "medical_charges",
+   "suite": 335,
+   "task": "regression",
+   "n_expected": 163065,
+   "d_expected": 3
+  },
+  {
+   "name": "cpu-act",
+   "openml_id": 44132,
+   "openml_name": "cpu_act",
+   "suite": 336,
+   "task": "regression",
+   "n_expected": 8192,
+   "d_expected": 21
+  },
+  {
+   "name": "pol",
+   "openml_id": 44133,
+   "openml_name": "pol",
+   "suite": 336,
+   "task": "regression",
+   "n_expected": 15000,
+   "d_expected": 26
+  },
+  {
+   "name": "elevators",
+   "openml_id": 44134,
+   "openml_name": "elevators",
+   "suite": 336,
+   "task": "regression",
+   "n_expected": 16599,
+   "d_expected": 16
+  },
+  {
+   "name": "wine-quality",
+   "openml_id": 44136,
+   "openml_name": "wine_quality",
+   "suite": 336,
+   "task": "regression",
+   "n_expected": 6497,
+   "d_expected": 11
+  },
+  {
+   "name": "ailerons",
+   "openml_id": 44137,
+   "openml_name": "Ailerons",
+   "suite": 336,
+   "task": "regression",
+   "n_expected": 13750,
+   "d_expected": 33
+  },
+  {
+   "name": "houses",
+   "openml_id": 44138,
+   "openml_name": "houses",
+   "suite": 336,
+   "task": "regression",
+   "n_expected": 20640,
+   "d_expected": 8
+  },
+  {
+   "name": "house-16h",
+   "openml_id": 44139,
+   "openml_name": "house_16H",
+   "suite": 336,
+   "task": "regression",
+   "n_expected": 22784,
+   "d_expected": 16
+  },
+  {
+   "name": "sulfur",
+   "openml_id": 44145,
+   "openml_name": "sulfur",
+   "suite": 336,
+   "task": "regression",
+   "n_expected": 10081,
+   "d_expected": 6
+  },
+  {
+   "name": "miamihousing2016",
+   "openml_id": 44147,
+   "openml_name": "MiamiHousing2016",
+   "suite": 336,
+   "task": "regression",
+   "n_expected": 13932,
+   "d_expected": 13
+  },
+  {
+   "name": "superconduct",
+   "openml_id": 44148,
+   "openml_name": "superconduct",
+   "suite": 336,
+   "task": "regression",
+   "n_expected": 21263,
+   "d_expected": 79
+  },
+  {
+   "name": "yprop-4-1",
+   "openml_id": 45032,
+   "openml_name": "yprop_4_1",
+   "suite": 336,
+   "task": "regression",
+   "n_expected": 8885,
+   "d_expected": 42
+  },
+  {
+   "name": "credit",
+   "openml_id": 44089,
+   "openml_name": "credit",
+   "suite": 337,
+   "task": "binary",
+   "n_expected": 16714,
+   "d_expected": 10
+  },
+  {
+   "name": "magictelescope",
+   "openml_id": 44125,
+   "openml_name": "MagicTelescope",
+   "suite": 337,
+   "task": "binary",
+   "n_expected": 13376,
+   "d_expected": 10
+  },
+  {
+   "name": "bank-marketing-binary",
+   "openml_id": 44126,
+   "openml_name": "bank-marketing",
+   "suite": 337,
+   "task": "binary",
+   "n_expected": 10578,
+   "d_expected": 7
+  },
+  {
+   "name": "miniboone",
+   "openml_id": 44128,
+   "openml_name": "MiniBooNE",
+   "suite": 337,
+   "task": "binary",
+   "n_expected": 72998,
+   "d_expected": 50
+  },
+  {
+   "name": "jannis",
+   "openml_id": 45021,
+   "openml_name": "jannis",
+   "suite": 337,
+   "task": "binary",
+   "n_expected": 57580,
+   "d_expected": 54
+  },
+  {
+   "name": "diabetes130us",
+   "openml_id": 45022,
+   "openml_name": "Diabetes130US",
+   "suite": 337,
+   "task": "binary",
+   "n_expected": 71090,
+   "d_expected": 7
+  },
+  {
+   "name": "heloc",
+   "openml_id": 45026,
+   "openml_name": "heloc",
+   "suite": 337,
+   "task": "binary",
+   "n_expected": 10000,
+   "d_expected": 22
+  },
+  {
+   "name": "california-binary",
+   "openml_id": 45028,
+   "openml_name": "california",
+   "suite": 337,
+   "task": "binary",
+   "n_expected": 20634,
+   "d_expected": 8
+  }
+ ]
+}
