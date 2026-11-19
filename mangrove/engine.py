@@ -1086,7 +1086,7 @@ class Engine:
         u = self.KR.hash_u01(tag, self.seed[:, None], self.local_round[:, None], torch.full((S, 1), level_key, device=dev, dtype=torch.int64), f[None, :])
         u = torch.where(base_mask, u, torch.full_like(u, 2.0))
         nbase = base_mask.sum(1)
-        k = torch.clamp(torch.ceil(frac * nbase.to(torch.float64)).to(torch.int64), min=1)
+        k = torch.clamp(torch.floor(frac.to(torch.float32) * nbase.to(torch.float32)).to(torch.int64), min=1)
         rank = torch.empty_like(u, dtype=torch.int64)
         rank.scatter_(1, torch.argsort(u, dim=1, stable=True), torch.arange(d, device=dev).expand(S, d))
         return (rank < k[:, None]) & base_mask

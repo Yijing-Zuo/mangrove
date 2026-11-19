@@ -1251,7 +1251,7 @@ def test_colsample_host_matches_torch_sampling():
         n_cases += 1
         if lk == 0:
             with np.errstate(invalid="ignore", over="ignore"):
-                k = np.maximum(np.ceil(np.minimum(frac_h * d, float(d))).astype(np.int64), 1)
+                k = np.maximum(np.floor(np.minimum(frac_h.astype(np.float32) * np.float32(d), np.float32(d))).astype(np.int64), 1)
             assert np.array_equal(got.sum(1), np.minimum(k, d))
             assert np.array_equal(got.sum(1)[np.isposinf(frac_h) | (frac_h >= 1e30)], np.full(int((np.isposinf(frac_h) | (frac_h >= 1e30)).sum()), d))
             assert np.array_equal(got.sum(1)[np.isnan(frac_h) | np.isneginf(frac_h)], np.ones(int((np.isnan(frac_h) | np.isneginf(frac_h)).sum()), dtype=np.int64))

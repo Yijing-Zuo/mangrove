@@ -547,8 +547,9 @@ def colsample_host(seed_h, lr_h, level_key, base, frac_h, d=None):
     if base is not None:
         h = np.where(base, h, np.uint64(1) << np.uint64(32))
     with np.errstate(invalid="ignore", over="ignore"):
-        prod = np.minimum(np.asarray(frac_h, dtype=np.float64) * nbase.astype(np.float64), float(d))
-        k = np.maximum(np.ceil(prod).astype(np.int64), 1)
+        frac32 = np.asarray(frac_h, dtype=np.float64).astype(np.float32)
+        prod = np.minimum(frac32 * nbase.astype(np.float32), np.float32(d))
+        k = np.maximum(np.floor(prod).astype(np.int64), 1)
     order = np.argsort(h, axis=1, kind="stable")
     rank = np.empty((S, d), dtype=np.int64)
     np.put_along_axis(rank, order, np.broadcast_to(np.arange(d, dtype=np.int64), (S, d)), axis=1)
