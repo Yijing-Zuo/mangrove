@@ -246,7 +246,7 @@ def main(argv=None):
     if run:
         trace = run["trace"]
         final = [e for e in trace if e["rounds"] == run["rungs"][-1]]
-        best = min(final, key=lambda e: e["score"]) if final else None
+        best = min(final, key=lambda e: (e["score"], e["trial"])) if final else None
         res["per_model"] = run["per_model"]
         res["throughput"]["model_rounds_executed"] = int(run["model_rounds_executed"])
         res["throughput"]["model_rounds_per_s"] = run["model_rounds_executed"] / run["wall_s"] if run["wall_s"] else None
