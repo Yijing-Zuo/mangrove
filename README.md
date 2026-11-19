@@ -38,17 +38,18 @@ MANGROVE_EMU=1 python -m pytest -q tests/test_emu.py
 
 Each study runs its workloads in order, writes one result file per run to `out/<study>/` and the end-to-end time of every run to `out/<study>/timing.jsonl`. `--print` lists the commands; `--tables` restricts the tables. The XGBoost pool runs start the CUDA MPS daemon; every other run stops it.
 
-Table 3 and Figure 6, with and without sampling (10 tables x 4 procedures x 3 seeds, sequential Hyperband on Adult and Higgs-50K):
+Section 6.2, the main table, the time breakdown and the per-table figure, with and without sampling (10 tables x 4 procedures x 3 seeds, sequential Hyperband on Adult and Higgs-50K):
 
 ```
 python -m scripts.run sampling
 python -m scripts.run no-sampling
 python -m scripts.summarize searches out/sampling
 python -m scripts.summarize searches out/no-sampling
+python -m scripts.summarize breakdown out/sampling
 python -m scripts.check alone out/no-sampling/higgs-1m/sha_mangrove_s0.json --k 6
 ```
 
-Table 4, other baselines and settings, for `{extra-tables, depths, settings, lightgbm-catboost, cpu, openboost, breadth}`:
+Section 6.2, the table of other baselines and settings, for `{extra-tables, depths, settings, lightgbm-catboost, cpu, openboost, breadth}`:
 
 ```
 python -m scripts.run extra-tables
@@ -59,7 +60,7 @@ python -m scripts.summarize fixed out/cpu
 
 Other GPUs: the same `sampling` and `no-sampling` commands after building with that GPU's `MG_ARCHS`. OpenBoost runs with the interpreter of its own environment.
 
-Figure 1 (XGBoost process pools), Figure 7 (learning over groups), Figure 10 (number of models) and Figure 11a (number of rows):
+Section 2.3 (XGBoost process pools), Section 6.3 (learning over groups) and Section 6.5 (number of models, 50K to 1M rows):
 
 ```
 python -m scripts.run pools
@@ -72,14 +73,14 @@ python -m scripts.run rows
 python -m scripts.summarize fixed out/rows
 ```
 
-Figure 11b (Higgs-1M to Higgs-11M, one A100 80GB, 60 GiB budget):
+Section 6.5, 1M to 11M rows (Higgs-1M to Higgs-11M, one A100 80GB, 60 GiB budget):
 
 ```
 python -m scripts.run large
 python -m scripts.summarize searches out/large
 ```
 
-Figure 8 (round anatomy), Figure 9 (ablation), Figure 12 and Section 6.6 (memory budgets), Figure 5 (lifecycle trace):
+Section 6.4 (round anatomy, ablation), Section 6.6 (memory budgets) and Section 5.2 (lifecycle trace):
 
 ```
 python -m scripts.run anatomy

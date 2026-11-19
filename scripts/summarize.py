@@ -90,6 +90,28 @@ def searches(root, base='xgb_gpu_8x1'):
         print(f'best score difference over {len(q)} searches: max {100 * max(q):.3f}%  median {100 * statistics.median(q):.3f}%')
 
 
+def breakdown(root, algo='sha', base='xgb_gpu_8x1'):
+    cells = defaultdict(lambda: defaultdict(list))
+    for r in load(root):
+        v = r['variant']
+        if 'dynamic_summary' not in r or v.get('algo') != algo or not r['_wall']:
+            continue
+        if v.get('trainer') == 'mangrove' and v.get('slots') != 320:
+            continue
+        cells[r['workload']['dataset']][system(r)].append(r)
+    for t, by in sorted(cells.items()):
+        line = [f'{t:20s}']
+        for s in (base, 'mangrove'):
+            rs = by.get(s)
+            if not rs:
+                continue
+            w = statistics.median(r['_wall'] for r in rs)
+            p = statistics.median(r['timing']['prep_s'] for r in rs)
+            tr = statistics.median(r['timing']['train_s'] for r in rs)
+            line.append(f'{s} preparation {p:.1f} loop {tr:.1f} other {w - p - tr:.1f} end-to-end {w:.1f} s')
+        print('  '.join(line))
+
+
 def fixed(root, base=None):
     cells = defaultdict(lambda: defaultdict(list))
     for r in load(root):
@@ -195,9 +217,9 @@ def anatomy(root):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 3 or sys.argv[1] not in ('searches', 'fixed', 'pools', 'models', 'ablation', 'memory', 'anatomy'):
-        sys.exit('usage: python -m scripts.summarize {searches,fixed,pools,models,ablation,memory,anatomy} <dir> [base]')
+    if len(sys.argv) < 3 or sys.argv[1] not in ('searches', 'breakdown', 'fixed', 'pools', 'models', 'ablation', 'memory', 'anatomy'):
+        sys.exit('usage: python -m scripts.summarize {searches,breakdown,fixed,pools,models,ablation,memory,anatomy} <dir> [base]')
     if not Path(sys.argv[2]).is_dir():
         sys.exit(f'{sys.argv[2]}: no such directory')
-    {'searches': searches, 'fixed': fixed, 'pools': pools, 'models': models, 'ablation': arms, 'memory': memory,
+    {'searches': searches, 'breakdown': breakdown, 'fixed': fixed, 'pools': pools, 'models': models, 'ablation': arms, 'memory': memory,
      'anatomy': anatomy}[sys.argv[1]](*sys.argv[2:])
