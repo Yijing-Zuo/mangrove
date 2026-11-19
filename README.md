@@ -10,7 +10,7 @@ Our code was tested under the following dependencies:
 - Python 3.13
 - CUDA 13.0 (driver 580.82), PyTorch 2.14.1, Triton 3.8.0
 - NumPy 2.4.6, scikit-learn 1.6.1, openml 0.15.1
-- XGBoost 3.4.1, LightGBM 4.7.0, CatBoost 1.2.10
+- XGBoost 3.4.1, LightGBM 4.7.0, CatBoost 1.2.10, CuPy 14.0.1 (cupy-cuda13x)
 - OpenBoost 1.0.0.dev0 (commit 5ac60ee, its own environment with numpy 2.3.5, numba 0.63.1, numba-cuda 0.27.0, cupy-cuda13x 14.2.0)
 
 Data preparation was tested with NumPy 2.5.3, pandas 3.0.5, scikit-learn 1.9.1, openml 0.15.1 (`requirements-data.txt`).
@@ -36,7 +36,7 @@ bash cuda/build.sh emu
 MANGROVE_EMU=1 python -m pytest -q tests/test_emu.py
 ```
 
-Each study runs its workloads in order, writes one result file per run to `out/<study>/` and the end-to-end time of every run to `out/<study>/timing.jsonl`. `--print` lists the commands; `--tables` restricts the tables. The XGBoost pool runs start the CUDA MPS daemon; every other run stops it.
+Each study runs its workloads in order, writes one result file per run to `out/<study>/` and the end-to-end time of every run to `out/<study>/timing.jsonl`. `--print` lists the commands; `--tables` restricts the tables. The XGBoost pool and tuned pool runs start the CUDA MPS daemon; every other run stops it.
 
 Section 6.2, the main table, the time breakdown and the per-table figure, with and without sampling (10 tables x 4 procedures x 3 seeds, sequential Hyperband on Adult and Higgs-50K):
 
@@ -47,6 +47,14 @@ python -m scripts.summarize searches out/sampling
 python -m scripts.summarize searches out/no-sampling
 python -m scripts.summarize breakdown out/sampling
 python -m scripts.check alone out/no-sampling/higgs-1m/sha_mangrove_s0.json --k 6
+```
+
+Section 6.2, the tuned pool against Mangrove and the XGBoost pool (Adult, SGEMM, Year and Higgs-1M x random search and SHA x 3 seeds, with sampling):
+
+```
+python -m scripts.run tuned
+python -m scripts.summarize searches out/tuned xgb_gpu_tuned_8x1
+python -m scripts.summarize searches out/tuned xgb_gpu_8x1 xgb_gpu_tuned_8x1
 ```
 
 Section 6.2, the table of other baselines and settings, for `{extra-tables, depths, settings, lightgbm-catboost, cpu, openboost, breadth}`:
@@ -87,6 +95,8 @@ python -m scripts.run anatomy
 python -m scripts.summarize anatomy out/anatomy
 python -m scripts.run ablation
 python -m scripts.summarize ablation out/ablation
+python -m scripts.run ablation-no-sampling
+python -m scripts.summarize ablation out/ablation-no-sampling
 python -m scripts.run budgets
 python -m scripts.summarize memory out/budgets
 python -m scripts.run trace

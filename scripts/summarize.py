@@ -41,7 +41,7 @@ def system(r):
     return t if t == 'mangrove' else f"{t}_{v.get('P')}x{v.get('nthread')}"
 
 
-def searches(root, base='xgb_gpu_8x1'):
+def searches(root, base='xgb_gpu_8x1', target='mangrove'):
     cells = defaultdict(lambda: defaultdict(list))
     for r in load(root):
         if 'dynamic_summary' not in r:
@@ -54,7 +54,7 @@ def searches(root, base='xgb_gpu_8x1'):
     rows = []
     for key, by in sorted(cells.items()):
         px = {r['repetition']: r for r in by.get(base, [])}
-        pairs = [(a, px[a['repetition']]) for a in sorted(by.get('mangrove', []), key=lambda r: r['repetition']) if a['repetition'] in px]
+        pairs = [(a, px[a['repetition']]) for a in sorted(by.get(target, []), key=lambda r: r['repetition']) if a['repetition'] in px]
         if not pairs:
             continue
         mg, xg = [a for a, _ in pairs], [b for _, b in pairs]

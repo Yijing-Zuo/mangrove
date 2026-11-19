@@ -4,6 +4,7 @@ SMALL = ['adult', 'higgs-50k']
 EXTRA_TABLES = ['miniboone', 'jannis', 'diamonds', 'jungle-chess', 'covertype-binary']
 DEPTH_TABLES = ['higgs-1m', 'year', 'sgemm']
 POOL_TABLES = ['adult', 'higgs-50k', 'sgemm', 'higgs-1m']
+TUNED_TABLES = ['adult', 'sgemm', 'year', 'higgs-1m']
 LARGE = ['higgs-1m', 'higgs-2m', 'higgs-4m', 'higgs-11m']
 ROWS = ['higgs-50k', 'higgs-100k', 'higgs-500k', 'higgs-1m']
 GROUPED = ['house-sales-zipcode', 'airlines-airport', 'airlines', 'adult', 'bank-marketing', 'covertype',
@@ -63,12 +64,12 @@ def search(study, table, proc, seed, system, out, sampling=False, extra=None, en
         if system == 'catboost_gpu':
             argv += ['--cb-regression-boost-from-average']
             e = {'MANGROVE_BENCH_XGB_FASTSCORE': '1'}
-        elif system == 'xgb_gpu':
+        elif system in ('xgb_gpu', 'xgb_gpu_tuned'):
             e = dict(ENV_XGB_SEARCH)
         else:
             e = {}
         e.update(env or {})
-        mps = system == 'xgb_gpu' and not (p == 1 and t > 1)
+        mps = system in ('xgb_gpu', 'xgb_gpu_tuned') and not (p == 1 and t > 1)
     if sampling:
         argv += flags(SAMPLING)
     return {'script': 'search', 'argv': argv, 'env': e, 'mps': mps, 'out': out}
@@ -108,7 +109,7 @@ def breadth_tables():
 
 
 def study(name):
-    mg, xgb = ('mangrove', None), ('xgb_gpu', {'P': 8, 'nthread': 1})
+    mg, xgb, tuned = ('mangrove', None), ('xgb_gpu', {'P': 8, 'nthread': 1}), ('xgb_gpu_tuned', {'P': 8, 'nthread': 1})
     if name == 'sampling':
         runs = _searches(name, MAIN, PROCEDURES, SEEDS, [mg, xgb], sampling=True)
         runs += _searches(name, SMALL, ['hyperband-sequential'], SEEDS, [mg, xgb], sampling=True)
@@ -121,6 +122,15 @@ def study(name):
     if name == 'no-sampling':
         runs = _searches(name, MAIN, PROCEDURES, SEEDS, [mg, xgb])
         return runs + _searches(name, SMALL, ['hyperband-sequential'], SEEDS, [mg, xgb])
+    if name == 'tuned':
+        runs = []
+        for seed in SEEDS:
+            for t in TUNED_TABLES:
+                for p in ('random', 'sha'):
+                    runs += _searches(name, [t], [p], [seed], [mg, xgb], sampling=True)
+                    runs += _searches(name, [t], [p], [seed], [tuned], sampling=True,
+                                      env={'MANGROVE_BENCH_XGBT_DEVICE_DATA': '0'} if t == 'adult' else None)
+        return runs
     if name == 'pool16':
         return _searches(name, ['higgs-1m', 'sgemm'], PROCEDURES, [0], [('xgb_gpu', {'P': 16, 'nthread': 1})])
     if name == 'extra-tables':
@@ -239,15 +249,17 @@ def study(name):
                     runs.append(search(name, t, p, 0, 'mangrove', f'out/{name}/{t}/{p}_mangrove_{gb}g_sampled.json',
                                        True, {'memory_budget_gb': gb, 'alloc_cap_factor': 3}))
         return runs
-    if name == 'ablation':
+    if name in ('ablation', 'ablation-no-sampling'):
+        sampled = name == 'ablation'
+        arms = {k: v for k, v in ARMS.items() if sampled or k in ('full', 'no-node-maps')}
         runs = []
         for t in POOL_TABLES:
-            runs.append(search(name, t, 'sha', 0, 'mangrove', f'out/{name}/{t}/warm.json', True))
+            runs.append(search(name, t, 'sha', 0, 'mangrove', f'out/{name}/{t}/warm.json', sampled))
             for seed in SEEDS:
                 for p in ('sha', 'hyperband-parallel'):
-                    for arm, (extra, env) in ARMS.items():
+                    for arm, (extra, env) in arms.items():
                         runs.append(search(name, t, p, seed, 'mangrove', f'out/{name}/{t}/{p}_{arm}_s{seed}.json',
-                                           True, extra, env=env))
+                                           sampled, extra, env=env))
         return runs
     if name == 'trace':
         out = 'out/trace/higgs-1m/sha_mangrove'
@@ -264,6 +276,6 @@ def study(name):
     raise KeyError(name)
 
 
-STUDIES = ['sampling', 'no-sampling', 'pool16', 'extra-tables', 'depths', 'settings', 'lightgbm-catboost', 'cpu',
-           'openboost', 'breadth', 'pools', 'groups', 'models', 'rows', 'large', 'budgets', 'ablation', 'trace',
-           'anatomy']
+STUDIES = ['sampling', 'no-sampling', 'tuned', 'pool16', 'extra-tables', 'depths', 'settings', 'lightgbm-catboost',
+           'cpu', 'openboost', 'breadth', 'pools', 'groups', 'models', 'rows', 'large', 'budgets', 'ablation',
+           'ablation-no-sampling', 'trace', 'anatomy']

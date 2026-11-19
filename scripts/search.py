@@ -11,7 +11,7 @@ sys.path.insert(0, str(HERE))
 from bench import schema
 from bench.workload import WorkloadSpec, build_jobs
 
-TRAINERS = ("xgb_cpu", "xgb_gpu", "lgb_cpu", "mangrove", "mock", "catboost_gpu")
+TRAINERS = ("xgb_cpu", "xgb_gpu", "xgb_gpu_tuned", "lgb_cpu", "mangrove", "mock", "catboost_gpu")
 ALGOS = {"random": "grid", "sha": "sha", "asha": "asha", "hyperband-parallel": "hbpar", "hyperband-sequential": "hyperband"}
 
 
@@ -91,7 +91,8 @@ def method_id(a, spec):
     algo = d["algo"] + (f"-{d['variant']}" if d["algo"] == "asha" else "")
     tr = {"xgb_cpu": f"xgb_cpu_{a.P}x{a.nthread}", "xgb_gpu": "xgb_gpu_seq" if a.P == 1 else f"xgb_gpu_mp{a.P}",
           "lgb_cpu": f"lgb_cpu_{a.P}x{a.nthread}", "mangrove": f"mangrove_s{a.slots}", "mock": "mock",
-          "catboost_gpu": ("catboost_cpu" if a.device == "cpu" else "catboost_gpu") + ("_seq" if a.P == 1 else f"_mp{a.P}")
+          "catboost_gpu": ("catboost_cpu" if a.device == "cpu" else "catboost_gpu") + ("_seq" if a.P == 1 else f"_mp{a.P}"),
+          "xgb_gpu_tuned": ("xgb_cpu_tuned" if a.device == "cpu" else "xgb_gpu_tuned") + ("_seq" if a.P == 1 else f"_mp{a.P}")
           }[a.trainer]
     return f"{algo}_{tr}"
 
@@ -138,6 +139,9 @@ def make_trainer(a, spec, ds):
     from bench.dynamic import trainers as TR
     if a.trainer == "mock":
         return TR.MockTrainer(W=a.P)
+    if a.trainer == "xgb_gpu_tuned":
+        from bench.dynamic.trainers_tuned import TunedXGBTrainer
+        return TunedXGBTrainer(spec, ds, a.P, a.nthread, "cpu" if a.device == "cpu" else "cuda", data_dir=a.data_dir)
     if a.trainer == "catboost_gpu":
         from bench.dynamic.trainers_catboost import CatBoostTrainer
         return CatBoostTrainer(spec, a.P, a.nthread, "cpu" if a.device == "cpu" else "cuda", data_dir=a.data_dir,
@@ -183,7 +187,7 @@ def main(argv=None):
     if a.trainer == "catboost_gpu" and spec.dynamic["algo"] != "grid":
         from bench.dynamic.trainers_catboost import UNSUPPORTED_REASON
         status, err = "unsupported", UNSUPPORTED_REASON.format(algo={v: k for k, v in ALGOS.items()}[spec.dynamic["algo"]])
-    gpu = a.trainer in ("xgb_gpu", "mangrove", "catboost_gpu") and a.device != "cpu"
+    gpu = a.trainer in ("xgb_gpu", "xgb_gpu_tuned", "mangrove", "catboost_gpu") and a.device != "cpu"
     from bench import gpumon
     sampler = gpumon.GpuSampler(out.with_suffix(".gpu.csv"), a.gpu_sample_ms) if (a.gpu_sample_ms and status == "ok") else None
     try:
@@ -209,6 +213,8 @@ def main(argv=None):
               "train_s": run["wall_s"] if run else None, "eval_s": 0.0,
               "details": {"note": "dynamic workloads: validation scoring is part of the driver loop for every method "
                                   "(decisions need it); train_s = driver wall time"}}
+    if a.trainer == "xgb_gpu_tuned" and tr is not None:
+        timing["details"]["breakdown"] = tr.breakdown(run["wall_s"] if run else None)
     per_model, used = [], []
     drv_trials = {}
     if run:
@@ -232,6 +238,7 @@ def main(argv=None):
                             "alloc_cap_factor": a.alloc_cap_factor,
                             "alloc_fraction_effective": getattr(tr, "alloc_fraction", None),
                             "continuation": ("serialize_reload" if a.trainer in ("xgb_cpu", "xgb_gpu", "lgb_cpu")
+                                             else f"resident_booster_{getattr(tr, 'cache', None)}" if a.trainer == "xgb_gpu_tuned"
                                              else "none_grid_only" if a.trainer == "catboost_gpu"
                                              else None),
                             **({"cb_gpu_ram_part": getattr(tr, "gpu_ram_part", None), "cb_quantize": not a.cb_no_quantize,
