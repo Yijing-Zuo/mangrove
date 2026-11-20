@@ -11,6 +11,7 @@ Our code was tested under the following dependencies:
 - CUDA 13.0 (driver 580.82), PyTorch 2.14.1, Triton 3.8.0
 - NumPy 2.4.6, scikit-learn 1.6.1, openml 0.15.1
 - XGBoost 3.4.1, LightGBM 4.7.0, CatBoost 1.2.10, CuPy 14.0.1 (cupy-cuda13x)
+- OpenBoost 1.0.0.dev0 (commit 5ac60ee, its own environment with numpy 2.3.5, numba 0.63.1, numba-cuda 0.27.0, cupy-cuda13x 14.2.0)
 
 Data preparation was tested with NumPy 2.5.3, pandas 3.0.5, scikit-learn 1.9.1, openml 0.15.1 (`requirements-data.txt`).
 
@@ -61,7 +62,7 @@ python -m scripts.summarize searches out/tuned xgb_gpu_tuned_8x1
 python -m scripts.summarize searches out/tuned xgb_gpu_8x1 xgb_gpu_tuned_8x1
 ```
 
-Section 6.2, Table 6 (without sampling) and the CatBoost comparison in the text, for `{extra-tables, depths, settings, lightgbm-catboost, cpu, breadth}`:
+Section 6.2, Table 6 (without sampling) and the CatBoost and OpenBoost comparisons in the text, for `{extra-tables, depths, settings, lightgbm-catboost, cpu, openboost, breadth}`:
 
 ```
 python -m scripts.run extra-tables
@@ -72,7 +73,12 @@ python -m scripts.summarize searches out/lightgbm-catboost catboost_gpu_1x1
 python -m scripts.summarize fixed out/lightgbm-catboost lgb_cpu
 python -m scripts.run cpu
 python -m scripts.summarize fixed out/cpu
+python -m scripts.run openboost --only mangrove
+python -m scripts.run openboost --only openboost.json
+python -m scripts.summarize fixed out/openboost
 ```
+
+The command with `--only openboost.json` runs OpenBoost and needs the interpreter of its own environment.
 
 Table 6, other GPUs (without sampling): build with that GPU's `MG_ARCHS`, then run `python -m scripts.run no-sampling` (on the L4, add `--tables airlines,sgemm,medical-charges,particulate-matter`) and `python -m scripts.summarize searches out/no-sampling`.
 
@@ -119,7 +125,7 @@ Section 6.6, equivalence to training alone: six models of each of nine searches 
 python -m scripts.check alone out/no-sampling/adult/hyperband-sequential_mangrove_s0.json out/no-sampling/airlines/sha_mangrove_s0.json out/no-sampling/sgemm/asha_mangrove_s0.json out/no-sampling/covertype/sha_mangrove_s0.json out/no-sampling/covertype/hyperband-parallel_mangrove_s0.json out/no-sampling/higgs-1m/sha_mangrove_s0.json out/no-sampling/higgs-1m/asha_mangrove_s0.json out/no-sampling/year/hyperband-parallel_mangrove_s0.json out/depths/higgs-1m/sha_mangrove_s0.json --k 6
 ```
 
-Speedup is a baseline's time divided by Mangrove's, each the median over three seeds (three runs of a fixed set). The comparisons marked with a dagger in Table 6 (with the exceptions in its note), the CatBoost searches, the 1M to 11M-row searches and the budget study use one run (seed 0 for searches). Averages over workloads are geometric means.
+Speedup is a baseline's time divided by Mangrove's, each the median over three seeds (three runs of a fixed set). OpenBoost, the comparisons marked with a dagger in Table 6 (with the exceptions in its note), the CatBoost searches, the 1M to 11M-row searches and the budget study use one run (seed 0 for searches). Averages over workloads are geometric means.
 
 ## License
 
