@@ -4,7 +4,6 @@ SMALL = ['adult', 'higgs-50k']
 EXTRA_TABLES = ['miniboone', 'jannis', 'diamonds', 'jungle-chess', 'covertype-binary']
 DEPTH_TABLES = ['higgs-1m', 'year', 'sgemm']
 POOL_TABLES = ['adult', 'higgs-50k', 'sgemm', 'higgs-1m']
-TUNED_TABLES = ['adult', 'sgemm', 'year', 'higgs-1m']
 LARGE = ['higgs-1m', 'higgs-2m', 'higgs-4m', 'higgs-11m']
 ROWS = ['higgs-50k', 'higgs-100k', 'higgs-500k', 'higgs-1m']
 GROUPED = ['house-sales-zipcode', 'airlines-airport', 'airlines', 'adult', 'bank-marketing', 'covertype',
@@ -123,13 +122,16 @@ def study(name):
         runs = _searches(name, MAIN, PROCEDURES, SEEDS, [mg, xgb])
         return runs + _searches(name, SMALL, ['hyperband-sequential'], SEEDS, [mg, xgb])
     if name == 'tuned':
+        # the 42 sampled workloads of `sampling`; the tuned pool builds its matrices on the GPU where they have the
+        # host-built cuts (SGEMM, Year, Higgs-1M) and on the host elsewhere
+        env = lambda t: None if t in ('sgemm', 'year', 'higgs-1m') else {'MANGROVE_BENCH_XGBT_DEVICE_DATA': '0'}
         runs = []
-        for seed in SEEDS:
-            for t in TUNED_TABLES:
-                for p in ('random', 'sha'):
-                    runs += _searches(name, [t], [p], [seed], [mg, xgb], sampling=True)
-                    runs += _searches(name, [t], [p], [seed], [tuned], sampling=True,
-                                      env={'MANGROVE_BENCH_XGBT_DEVICE_DATA': '0'} if t == 'adult' else None)
+        for tables, procs in ((MAIN, PROCEDURES), (SMALL, ['hyperband-sequential'])):
+            for seed in SEEDS:
+                for t in tables:
+                    for p in procs:
+                        runs += _searches(name, [t], [p], [seed], [mg, xgb], sampling=True)
+                        runs += _searches(name, [t], [p], [seed], [tuned], sampling=True, env=env(t))
         return runs
     if name == 'pool16':
         return _searches(name, ['higgs-1m', 'sgemm'], PROCEDURES, [0], [('xgb_gpu', {'P': 16, 'nthread': 1})])

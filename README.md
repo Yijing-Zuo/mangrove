@@ -11,7 +11,6 @@ Our code was tested under the following dependencies:
 - CUDA 13.0 (driver 580.82), PyTorch 2.14.1, Triton 3.8.0
 - NumPy 2.4.6, scikit-learn 1.6.1, openml 0.15.1
 - XGBoost 3.4.1, LightGBM 4.7.0, CatBoost 1.2.10, CuPy 14.0.1 (cupy-cuda13x)
-- OpenBoost 1.0.0.dev0 (commit 5ac60ee, its own environment with numpy 2.3.5, numba 0.63.1, numba-cuda 0.27.0, cupy-cuda13x 14.2.0)
 
 Data preparation was tested with NumPy 2.5.3, pandas 3.0.5, scikit-learn 1.9.1, openml 0.15.1 (`requirements-data.txt`).
 
@@ -49,7 +48,7 @@ python -m scripts.summarize breakdown out/sampling
 python -m scripts.check alone out/no-sampling/higgs-1m/sha_mangrove_s0.json --k 6
 ```
 
-Section 6.2, the tuned pool against Mangrove and the XGBoost pool (Adult, SGEMM, Year and Higgs-1M x random search and SHA x 3 seeds, with sampling):
+Section 6.2, the tuned pool against Mangrove and the XGBoost pool on the 42 workloads of `sampling` (with sampling):
 
 ```
 python -m scripts.run tuned
@@ -57,7 +56,7 @@ python -m scripts.summarize searches out/tuned xgb_gpu_tuned_8x1
 python -m scripts.summarize searches out/tuned xgb_gpu_8x1 xgb_gpu_tuned_8x1
 ```
 
-Section 6.2, the table of other baselines and settings, for `{extra-tables, depths, settings, lightgbm-catboost, cpu, openboost, breadth}`:
+Section 6.2, the table of other baselines and settings, for `{extra-tables, depths, settings, lightgbm-catboost, cpu, breadth}`:
 
 ```
 python -m scripts.run extra-tables
@@ -66,7 +65,7 @@ python -m scripts.run cpu
 python -m scripts.summarize fixed out/cpu
 ```
 
-Other GPUs: the same `sampling` and `no-sampling` commands after building with that GPU's `MG_ARCHS`. OpenBoost runs with the interpreter of its own environment.
+Other GPUs: the same `sampling` and `no-sampling` commands after building with that GPU's `MG_ARCHS`.
 
 Section 2.3 (XGBoost process pools), Section 6.3 (learning over groups) and Section 6.5 (number of models, 50K to 1M rows):
 
